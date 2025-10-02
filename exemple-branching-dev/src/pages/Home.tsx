@@ -1,7 +1,8 @@
-import { usePosts } from "../Hooks/usePosts";
+import React from "react";
+import { usePosts } from "../Hooks/usePosts"; 
 import PostList from "../components/PostList";
 
-const Home = () => {
+const Home: React.FC = () => {
   const { posts, loading } = usePosts();
   const user = localStorage.getItem("user");
 
@@ -19,3 +20,4 @@ const Home = () => {
 };
 
 export default Home;
+

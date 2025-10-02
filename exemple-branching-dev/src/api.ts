@@ -94,9 +94,16 @@ export async function deletePost(id: number): Promise<void> {
   if (!res.ok) throw new Error("Kunde inte ta bort inlägg");
 }
 
-// CATEGORIES
+// Categories
 export async function getCategories(): Promise<Category[]> {
   const res = await fetch(`${API_URL}/categories`);
   if (!res.ok) throw new Error("Kunde inte hämta kategorier");
   return res.json();
 }
+
+// Comments
+export async function getComments(postId: number): Promise<Comment[]> {
+  const res = await fetch(`${API_URL}/posts/${postId}/comments`);
+  if (!res.ok) throw new Error("Kunde inte hämta kommentarer");
+  return res.json();}
+
