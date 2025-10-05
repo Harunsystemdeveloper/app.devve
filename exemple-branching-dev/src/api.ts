@@ -90,20 +90,24 @@ export async function updatePost(id: number, post: Partial<Post>): Promise<Post>
 }
 
 export async function deletePost(id: number): Promise<void> {
-  const res = await fetch(`${API_URL}/posts/${id}`, { method: "DELETE" });
+  const res = await fetch(`${API_URL}/posts/${id}`, {
+    method: "DELETE",
+  });
   if (!res.ok) throw new Error("Kunde inte ta bort inlägg");
 }
 
-// Categories
+// CATEGORIES
 export async function getCategories(): Promise<Category[]> {
   const res = await fetch(`${API_URL}/categories`);
   if (!res.ok) throw new Error("Kunde inte hämta kategorier");
   return res.json();
 }
 
-// Comments
+// COMMENTS
 export async function getComments(postId: number): Promise<Comment[]> {
   const res = await fetch(`${API_URL}/posts/${postId}/comments`);
   if (!res.ok) throw new Error("Kunde inte hämta kommentarer");
-  return res.json();}
+  return res.json();
+}
+
 
