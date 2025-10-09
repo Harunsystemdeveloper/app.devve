@@ -1,15 +1,17 @@
 import React from "react";
-import { Row, Col } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 
 const Start: React.FC = () => {
   return (
-    <Row>
-      <Col>
-        <h2>My start page</h2>
-        <p>The start page of my application. Change soon.</p>
-      </Col>
-    </Row>
+    <div className="container my-3">
+      <h2>Välkommen till Digital Anslagstavla!</h2>
+      <p>Här kan du se alla inlägg och skapa nya.</p>
+      <Link to="/" className="btn btn-primary mt-2">
+        Gå till startsidan
+      </Link>
+    </div>
   );
 };
 
 export default Start;
+

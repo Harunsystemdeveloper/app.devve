@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getPost, updatePost } from "../api";
 
 const EditPost = () => {
   const { id } = useParams<{ id: string }>();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -21,7 +22,7 @@ const EditPost = () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     if (id) {
       await updatePost(Number(id), { title, content, categoryId: 1, userId: user.id });
-      window.location.href = "/";
+      navigate("/"); // tillbaka till startsidan
     }
   };
 

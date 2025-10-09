@@ -4,7 +4,7 @@ import type { Post } from "../types";
 import { getPosts } from "../api";
 
 const PostDetails = () => {
-  const { id } = useParams<{ id: string }>(); // fångar id från URL
+  const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
 
   useEffect(() => {
@@ -22,12 +22,8 @@ const PostDetails = () => {
     <div className="container my-3">
       <h2>{post.title}</h2>
       <p>{post.content}</p>
-      <p>
-        <strong>Kategori:</strong> {post.categoryId}
-      </p>
-      <p>
-        <strong>Användare:</strong> {post.userId}
-      </p>
+      <p><strong>Kategori:</strong> {post.categoryId}</p>
+      <p><strong>Användare:</strong> {post.userId}</p>
     </div>
   );
 };

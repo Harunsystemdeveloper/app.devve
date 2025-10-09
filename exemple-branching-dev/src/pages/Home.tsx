@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { usePosts } from "../Hooks/usePosts"; 
 import PostList from "../components/PostList";
 
@@ -11,9 +12,9 @@ const Home: React.FC = () => {
       <h2>Digital Anslagstavla</h2>
       {loading ? <p>Laddar...</p> : <PostList posts={posts} />}
       {user && (
-        <a href="/create" className="btn btn-success mt-3">
+        <Link to="/create" className="btn btn-success mt-3">
           Skapa nytt inlägg
-        </a>
+        </Link>
       )}
     </div>
   );

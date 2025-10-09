@@ -13,11 +13,12 @@ export default function App() {
     <>
       <Header />
       <main>
-        <Outlet /> {/* Här renderas Home, Start, NotFound */}
+        <Outlet /> {/* Här renderas Home, Start, CreatePost, EditPost, NotFound */}
       </main>
       <Footer />
       {showBootstrapBreakpoints && <BootstrapBreakpoints />}
     </>
   );
 }
+
 
