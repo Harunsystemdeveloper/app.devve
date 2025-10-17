@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { usePosts } from "../Hooks/usePosts"; 
+import { getPosts, Post as PostType } from "../api";
+
 import PostList from "../components/PostList";
 
 const Home: React.FC = () => {
-  const { posts, loading } = usePosts();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const user = localStorage.getItem("user");
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await getPosts();
+        setPosts(data);
+      } catch (err) {
+        console.error("Kunde inte hämta inlägg:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   return (
     <div className="container my-3">
@@ -21,4 +37,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-

@@ -1,6 +1,6 @@
-import React from "react"; // Viktigt för JSX
-import Home from './pages/Home';
-import Start from './pages/Start';
+import React from "react"; 
+import Home from "./pages/Home";
+import Start from "./pages/Start";
 import CreatePost from './pages/CreatePost';
 import EditPost from './pages/EditPost';
 import PostDetails from './pages/PostDetails';

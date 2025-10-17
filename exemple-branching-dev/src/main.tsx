@@ -19,3 +19,5 @@ createRoot(document.querySelector('#root')!).render(
     <RouterProvider router={router} />
   </StrictMode>
 );
+
+console.log("Hejsan")

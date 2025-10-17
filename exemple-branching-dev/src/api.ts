@@ -1,19 +1,8 @@
-// src/api.ts
-export interface User {
-  id: number;
-  username: string;
-  role: string;
-}
+const API_URL = "http://localhost:5001"; // OBS: http, inte https
 
-export interface UserLogin {
-  username: string;
-  password: string;
-}
-
-export interface Category {
-  id: number;
-  name: string;
-}
+export interface User { id: number; username: string; role: string; }
+export interface UserLogin { username: string; password: string; }
+export interface Category { id: number; name: string; }
 
 export interface Post {
   id: number;
@@ -32,8 +21,6 @@ export interface Comment {
   postId: number;
   user?: User;
 }
-
-const API_URL = "https://localhost:5001";
 
 // AUTH
 export async function register(user: { username: string; password: string }): Promise<User> {
@@ -90,9 +77,7 @@ export async function updatePost(id: number, post: Partial<Post>): Promise<Post>
 }
 
 export async function deletePost(id: number): Promise<void> {
-  const res = await fetch(`${API_URL}/posts/${id}`, {
-    method: "DELETE",
-  });
+  const res = await fetch(`${API_URL}/posts/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Kunde inte ta bort inlägg");
 }
 
@@ -109,5 +94,4 @@ export async function getComments(postId: number): Promise<Comment[]> {
   if (!res.ok) throw new Error("Kunde inte hämta kommentarer");
   return res.json();
 }
-
 
