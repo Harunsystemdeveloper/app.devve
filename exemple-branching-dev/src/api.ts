@@ -1,8 +1,23 @@
-const API_URL = "http://localhost:5001"; // OBS: http, inte https
+// src/api.ts
 
-export interface User { id: number; username: string; role: string; }
-export interface UserLogin { username: string; password: string; }
-export interface Category { id: number; name: string; }
+const API_URL = "http://localhost:5000"; // OBS: använd http, inte https
+
+// --- Typer ---
+export interface User {
+  id: number;
+  username: string;
+  role: string;
+}
+
+export interface UserLogin {
+  username: string;
+  password: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+}
 
 export interface Post {
   id: number;
@@ -22,7 +37,7 @@ export interface Comment {
   user?: User;
 }
 
-// AUTH
+// --- AUTH ---
 export async function register(user: { username: string; password: string }): Promise<User> {
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
@@ -43,7 +58,7 @@ export async function login(credentials: UserLogin): Promise<User> {
   return res.json();
 }
 
-// POSTS
+// --- POSTS ---
 export async function getPosts(): Promise<Post[]> {
   const res = await fetch(`${API_URL}/posts`);
   if (!res.ok) throw new Error("Kunde inte hämta inlägg");
@@ -81,17 +96,18 @@ export async function deletePost(id: number): Promise<void> {
   if (!res.ok) throw new Error("Kunde inte ta bort inlägg");
 }
 
-// CATEGORIES
+// --- CATEGORIES ---
 export async function getCategories(): Promise<Category[]> {
   const res = await fetch(`${API_URL}/categories`);
   if (!res.ok) throw new Error("Kunde inte hämta kategorier");
   return res.json();
 }
 
-// COMMENTS
+// --- COMMENTS ---
 export async function getComments(postId: number): Promise<Comment[]> {
   const res = await fetch(`${API_URL}/posts/${postId}/comments`);
   if (!res.ok) throw new Error("Kunde inte hämta kommentarer");
   return res.json();
 }
+
 

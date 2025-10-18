@@ -1,27 +1,34 @@
 import React, { useEffect, useState } from "react";
-import type { Comment } from "../types";
 import { getComments } from "../api";
+import type { Comment } from "../api";
 
-
-interface Props {
-  postId: number;
-}
-
-export default function CommentList({ postId }: Props) {
+const CommentList: React.FC<{ postId: number }> = ({ postId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getComments(postId).then(data => setComments(data));
+    (async () => {
+      try {
+        const data = await getComments(postId);
+        setComments(data);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [postId]);
 
+  if (loading) return <p>Laddar kommentarer…</p>;
+  if (!comments.length) return <p>Inga kommentarer ännu.</p>;
+
   return (
-    <div>
-      <h5>Kommentarer</h5>
+    <ul className="list-group">
       {comments.map(c => (
-        <div key={c.id} className="border p-2 mb-2">
-          <strong>{c.user?.username}:</strong> {c.content}
-        </div>
+        <li key={c.id} className="list-group-item">
+          <strong>{c.user?.username ?? "Anonym"}:</strong> {c.content}
+        </li>
       ))}
-    </div>
+    </ul>
   );
-}
+};
+
+export default CommentList;

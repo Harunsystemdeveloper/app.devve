@@ -1,9 +1,14 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
+
 namespace WebApp;
 public static class FileServer
 {
     private static string FPath;
 
-    public static void Start()
+    // ✅ Ta emot WebApplication app som parameter
+    public static void Start(WebApplication app)
     {
         // Convert frontendPath to an absolute path
         FPath = Path.Combine(
@@ -11,16 +16,15 @@ public static class FileServer
             Globals.frontendPath
         );
 
-        HandleStatusCodes();
-        ServeFiles();
-        ServeFileLists();
+        HandleStatusCodes(app);
+        ServeFiles(app);
+        ServeFileLists(app);
     }
 
-    // Write status codes as response bodies
-    // and if the app is an SPA serve index.html on non-file 404:s
-    private static void HandleStatusCodes()
+    // --- Hantera statuskoder och 404 för SPA ---
+    private static void HandleStatusCodes(WebApplication app)
     {
-        App.UseStatusCodePages(async statusCodeContext =>
+        app.UseStatusCodePages(async statusCodeContext =>
         {
             var context = statusCodeContext.HttpContext;
             var request = context.Request;
@@ -28,16 +32,16 @@ public static class FileServer
             var statusCode = response.StatusCode;
             var isInApi = request.Path.StartsWithSegments("/api");
             var isFilePath = (request.Path + "").Contains('.');
-            var type = isInApi || statusCode != 404 ?
-                "application/json; charset=utf-8" : "text/html";
-            var error = statusCode == 404 ?
-                "404. Not found." : "Status code: " + statusCode;
+            var type = isInApi || statusCode != 404
+                ? "application/json; charset=utf-8"
+                : "text/html";
+            var error = statusCode == 404
+                ? "404. Not found."
+                : "Status code: " + statusCode;
 
             response.ContentType = type;
             if (Globals.isSpa && !isInApi && !isFilePath && statusCode == 404)
             {
-                // For SPA:s server the index.html on routes not matching
-                // any folders (thus handing the routing to the frontend)
                 response.StatusCode = 200;
                 await response.WriteAsync(
                     File.ReadAllText(Path.Combine(FPath, "index.html"))
@@ -50,19 +54,19 @@ public static class FileServer
         });
     }
 
-    private static void ServeFiles()
+    // --- Servera statiska filer ---
+    private static void ServeFiles(WebApplication app)
     {
-        // Serve static frontend files (middleware)
-        App.UseFileServer(new FileServerOptions
+        app.UseFileServer(new FileServerOptions
         {
             FileProvider = new PhysicalFileProvider(FPath)
         });
     }
 
-    private static void ServeFileLists()
+    // --- Lista filer från frontend-mappar ---
+    private static void ServeFileLists(WebApplication app)
     {
-        // Get a list of files from a subfolder in the frontend
-        App.MapGet("/api/files/{folder}", (HttpContext context, string folder) =>
+        app.MapGet("/api/files/{folder}", (HttpContext context, string folder) =>
         {
             object result = null;
             try

@@ -1,20 +1,16 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const NotFoundPage: React.FC = () => {
-  const location = useLocation();
-
-  return (
-    <div className="container my-3">
-      <h2>Not Found: 404</h2>
-      <p>We are sorry, but there doesn't seem to be any page on this site that matches the URL:</p>
-      <p><strong>{location.pathname}</strong></p>
-      <p>Please <Link to="/">visit the start page</Link> instead.</p>
-    </div>
-  );
-};
+const NotFoundPage: React.FC = () => (
+  <div className="text-center py-5">
+    <h1>404</h1>
+    <p>Sidan kunde inte hittas.</p>
+    <Link className="btn btn-primary" to="/">Till startsidan</Link>
+  </div>
+);
 
 export default NotFoundPage;
+
 
 
 

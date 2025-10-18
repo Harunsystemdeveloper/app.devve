@@ -1,15 +1,15 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
-interface Props {
-  children: React.ReactNode;
-}
-
-export default function ProtectedRoute({ children }: Props) {
+const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const user = localStorage.getItem("user");
+  const location = useLocation();
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
-  return <>{children}</>; 
-}
+  return children;
+};
+
+export default ProtectedRoute;
+
 

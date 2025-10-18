@@ -1,50 +1,42 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { getPost, updatePost } from "../api";
+import type { Post } from "../api";
 
-const EditPost = () => {
-  const { id } = useParams<{ id: string }>();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+const EditPost: React.FC = () => {
+  const { id } = useParams();
+  const postId = Number(id);
+  const [form, setForm] = useState<Partial<Post>>({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) {
-      getPost(Number(id)).then((p) => {
-        setTitle(p.title);
-        setContent(p.content);
-      });
-    }
-  }, [id]);
+    (async () => {
+      const p = await getPost(postId);
+      setForm(p);
+    })();
+  }, [postId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (id) {
-      await updatePost(Number(id), { title, content, categoryId: 1, userId: user.id });
-      navigate("/"); // tillbaka till startsidan
-    }
+    await updatePost(postId, { title: form.title, content: form.content, categoryId: form.categoryId });
+    navigate(`/post/${postId}`);
   };
 
+  if (!form) return null;
+
   return (
-    <div className="container my-3">
-      <h3>Redigera inlägg</h3>
-      <form onSubmit={handleSubmit}>
-        <input
-          className="form-control mb-2"
-          placeholder="Titel"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <textarea
-          className="form-control mb-2"
-          placeholder="Innehåll"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <button className="btn btn-primary">Uppdatera</button>
-      </form>
-    </div>
+    <form className="card p-3" onSubmit={onSubmit}>
+      <h4>Redigera inlägg</h4>
+      <div className="mb-3">
+        <label className="form-label">Titel</label>
+        <input className="form-control" value={form.title ?? ""} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+      </div>
+      <div className="mb-3">
+        <label className="form-label">Innehåll</label>
+        <textarea className="form-control" rows={5} value={form.content ?? ""} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} />
+      </div>
+      <button className="btn btn-primary">Uppdatera</button>
+    </form>
   );
 };
 

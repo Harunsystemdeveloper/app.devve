@@ -1,24 +1,22 @@
-import { useLocation, Outlet } from 'react-router-dom';
+import React from "react";
+import { AuthProvider } from "./Hooks/useAuth";
 import Header from "./partials/Header";
-import Footer from './partials/Footer';
-import BootstrapBreakpoints from './parts/BootstrapBreakpoints';
+import Footer from "./partials/Footer";
+import RoutesFile from "./routes";
 
-const showBootstrapBreakpoints = true;
-
-export default function App() {
-  useLocation();
-  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-
+const App: React.FC = () => {
   return (
-    <>
+    <AuthProvider>
       <Header />
-      <main>
-        <Outlet /> {/* Här renderas Home, Start, CreatePost, EditPost, NotFound */}
+      <main className="container my-4">
+        <RoutesFile />
       </main>
       <Footer />
-      {showBootstrapBreakpoints && <BootstrapBreakpoints />}
-    </>
+    </AuthProvider>
   );
-}
+};
+
+export default App;
+
 
 

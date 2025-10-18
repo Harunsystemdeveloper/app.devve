@@ -1,13 +1,11 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import React from "react";
 
-export default function Footer() {
-  return <footer>
-    <Container fluid>
-      <Row>
-        <Col className="text-center py-3 text-bg-primary">
-          © My guy {new Date().getFullYear()}
-        </Col>
-      </Row>
-    </Container>
-  </footer>;
-}
+const Footer: React.FC = () => (
+  <footer className="bg-light border-top mt-5">
+    <div className="container py-3 text-center">
+      <small>© {new Date().getFullYear()} Anslagstavlan</small>
+    </div>
+  </footer>
+);
+
+export default Footer;

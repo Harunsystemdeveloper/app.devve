@@ -1,23 +1,15 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import '../sass/index.scss';
-import App from './App';
-import routes from './routes';
+// src/main.tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../sass/index.scss";
 
-// Browser router
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <App />,
-    children: routes // Routes här som barn
-  }
-]);
-
-createRoot(document.querySelector('#root')!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
 );
-
-console.log("Hejsan")

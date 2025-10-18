@@ -1,4 +1,5 @@
 namespace WebApp;
+
 public static class LoginRoutes
 {
     private static Obj GetUser(HttpContext context)
@@ -8,19 +9,20 @@ public static class LoginRoutes
 
     public static void Start()
     {
-        App.MapPost("/api/login", (HttpContext context, JsonElement bodyJson) =>
+        // POST: Logga in användare
+        Server.App.MapPost("/api/login", (HttpContext context, JsonElement bodyJson) =>
         {
             var user = GetUser(context);
             var body = JSON.Parse(bodyJson.ToString());
 
-            // If there is a user logged in already
+            // Om en användare redan är inloggad
             if (user != null)
             {
                 var already = new { error = "A user is already logged in." };
                 return RestResult.Parse(context, already);
             }
 
-            // Find the user in the DB
+            // Hitta användaren i databasen
             var dbUser = SQLQueryOne(
                 "SELECT * FROM users WHERE email = $email",
                 new { body.email }
@@ -30,7 +32,7 @@ public static class LoginRoutes
                 return RestResult.Parse(context, new { error = "No such user." });
             }
 
-            // If the password doesn't match
+            // Kolla lösenordet
             if (!Password.Verify(
                 (string)body.password,
                 (string)dbUser.password
@@ -40,26 +42,28 @@ public static class LoginRoutes
                     new { error = "Password mismatch." });
             }
 
-            // Add the user to the session, without password
+            // Lägg till användaren i session (utan lösenord)
             dbUser.Delete("password");
             Session.Set(context, "user", dbUser);
 
-            // Return the user
+            // Returnera användaren
             return RestResult.Parse(context, dbUser!);
         });
 
-        App.MapGet("/api/login", (HttpContext context) =>
+        // GET: Hämta inloggad användare
+        Server.App.MapGet("/api/login", (HttpContext context) =>
         {
             var user = GetUser(context);
             return RestResult.Parse(context, user != null ?
                 user : new { error = "No user is logged in." });
         });
 
-        App.MapDelete("/api/login", (HttpContext context) =>
+        // DELETE: Logga ut användare
+        Server.App.MapDelete("/api/login", (HttpContext context) =>
         {
             var user = GetUser(context);
 
-            // Delete the user from the session
+            // Ta bort användaren från session
             Session.Set(context, "user", null);
 
             return RestResult.Parse(context, user == null ?

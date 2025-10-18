@@ -1,49 +1,35 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login } from "../api";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../Hooks/useAuth";
 
-export default function Login() {
+const Login: React.FC = () => {
+  const { loginUser } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const location = useLocation() as any;
+  const from = location.state?.from ?? "/";
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const user = await login({ username, password });
-      localStorage.setItem("user", JSON.stringify(user));
-      navigate("/");
-    } catch {
-      alert("Fel användarnamn eller lösenord");
-    }
+    await loginUser({ username, password });
+    navigate(from, { replace: true });
   };
 
   return (
-    <div className="container my-3">
-      <h2>Logga in</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Användarnamn</label>
-          <input
-            type="text"
-            className="form-control"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Lösenord</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Logga in
-        </button>
-      </form>
-    </div>
+    <form className="card p-3 mx-auto" style={{ maxWidth: 420 }} onSubmit={onSubmit}>
+      <h4>Logga in</h4>
+      <div className="mb-3">
+        <label className="form-label">Användarnamn</label>
+        <input className="form-control" value={username} onChange={e => setUsername(e.target.value)} required />
+      </div>
+      <div className="mb-3">
+        <label className="form-label">Lösenord</label>
+        <input type="password" className="form-control" value={password} onChange={e => setPassword(e.target.value)} required />
+      </div>
+      <button className="btn btn-primary w-100">Logga in</button>
+    </form>
   );
-}
+};
+
+export default Login;

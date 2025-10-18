@@ -1,9 +1,11 @@
 namespace WebApp;
+
 public static class RestApi
 {
     public static void Start()
     {
-        App.MapPost("/api/{table}", (
+        // POST: Lägg till ny post
+        Server.App.MapPost("/api/{table}", (
             HttpContext context, string table, JsonElement bodyJson
         ) =>
         {
@@ -16,7 +18,7 @@ public static class RestApi
             var result = SQLQueryOne(sql, parsed.body, context);
             if (!result.HasKey("error"))
             {
-                // Get the insert id and add to our result
+                // Hämta senaste insatta ID
                 result.insertId = SQLQueryOne(
                     @$"SELECT id AS __insertId 
                        FROM {table} ORDER BY id DESC LIMIT 1"
@@ -25,7 +27,8 @@ public static class RestApi
             return RestResult.Parse(context, result);
         });
 
-        App.MapGet("/api/{table}", (
+        // GET: Hämta alla poster
+        Server.App.MapGet("/api/{table}", (
             HttpContext context, string table
         ) =>
         {
@@ -35,7 +38,8 @@ public static class RestApi
             return RestResult.Parse(context, SQLQuery(sql, query.parameters, context));
         });
 
-        App.MapGet("/api/{table}/{id}", (
+        // GET: Hämta post med ID
+        Server.App.MapGet("/api/{table}/{id}", (
             HttpContext context, string table, string id
         ) =>
             RestResult.Parse(context, SQLQueryOne(
@@ -45,7 +49,8 @@ public static class RestApi
             ))
         );
 
-        App.MapPut("/api/{table}/{id}", (
+        // PUT: Uppdatera post
+        Server.App.MapPut("/api/{table}/{id}", (
             HttpContext context, string table, string id, JsonElement bodyJson
         ) =>
         {
@@ -58,7 +63,8 @@ public static class RestApi
             return RestResult.Parse(context, result);
         });
 
-        App.MapDelete("/api/{table}/{id}", (
+        // DELETE: Ta bort post
+        Server.App.MapDelete("/api/{table}/{id}", (
              HttpContext context, string table, string id
         ) =>
             RestResult.Parse(context, SQLQueryOne(

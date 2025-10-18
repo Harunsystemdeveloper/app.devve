@@ -18,14 +18,14 @@ public static class Server
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins("http://localhost:5173") // frontend URL
+                policy.WithOrigins("http://localhost:5173") // Din frontend-port (Vite)
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
         });
 
         // -------------------
-        // Bygg App innan allt annat
+        // Bygg appen
         // -------------------
         App = builder.Build();
 
@@ -37,21 +37,30 @@ public static class Server
         // -------------------
         Middleware();
         DebugLog.Start();
-        Acl.Start();          // App måste finnas
-        ErrorHandler.Start(); // App måste finnas
-        FileServer.Start();
+
+        // ✅ Skicka in App till alla komponenter som behöver det
+        Acl.Start(App);
+        ErrorHandler.Start(App);
+        FileServer.Start(App);
         LoginRoutes.Start();
         RestApi.Start();
         Session.Start();
 
+        // -------------------
         // Starta server
+        // -------------------
         var runUrl = "http://localhost:" + Globals.port;
-        Log("Server running on:", runUrl);
-        Log("With these settings:", Globals);
+        Log("Starting Minimal API Backend on port:", Globals.port);
+        Log("Frontend path:", Globals.frontendPath);
+      Log("Database path:", Globals.dbPath);
+
 
         App.Run(runUrl);
     }
 
+    // -------------------
+    // Egen Middleware
+    // -------------------
     public static void Middleware()
     {
         App.Use(async (context, next) =>
@@ -60,6 +69,7 @@ public static class Server
             DebugLog.Register(context);
             Session.Touch(context);
 
+            // Kontrollera ACL (Access Control)
             if (!Acl.Allow(context))
             {
                 context.Response.StatusCode = 405;
@@ -72,6 +82,7 @@ public static class Server
                 await next(context);
             }
 
+            // Logga svar
             var res = context.Response;
             var contentLength = res.ContentLength ?? 0;
             var info = Obj(new
@@ -91,13 +102,21 @@ public static class Server
         });
     }
 
+    // -------------------
+    // Hjälpmetod för loggning
+    // -------------------
     private static void Log(string message, object? data = null)
     {
         Console.WriteLine(message);
         if (data != null)
         {
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(data, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(
+                data,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            ));
         }
     }
 }
+
+
 

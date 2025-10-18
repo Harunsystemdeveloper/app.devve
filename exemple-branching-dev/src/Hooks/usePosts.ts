@@ -1,16 +1,22 @@
-import { useState, useEffect } from "react";
-import type { Post } from "../types";
+import { useEffect, useState } from "react";
 import { getPosts } from "../api";
+import type { Post } from "../api";
 
-export function usePosts() {
+export default function usePosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getPosts()
-      .then(data => setPosts(data))
-      .finally(() => setLoading(false));
+    (async () => {
+      try {
+        const data = await getPosts();
+        setPosts(data);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  return { posts, loading, setPosts };
+  return { posts, setPosts, loading };
 }
+

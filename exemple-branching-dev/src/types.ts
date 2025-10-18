@@ -32,3 +32,5 @@ export interface UserLogin {
   password: string;
 }
 
+
+export type LoadingState = "idle" | "loading" | "error" | "success";

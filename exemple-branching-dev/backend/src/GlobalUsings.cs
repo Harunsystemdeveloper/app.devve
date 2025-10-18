@@ -16,3 +16,4 @@ global using WebApp;
 global using static WebApp.Shared;
 global using static WebApp.RequestBodyParser;
 global using static WebApp.DbQuery;
+global using static WebApp.App; // ✅ Lägg till denna rad för att lösa "App does not exist"-fel
